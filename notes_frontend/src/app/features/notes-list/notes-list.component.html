@@ -1,0 +1,47 @@
+<section class="notes-list-wrap" role="navigation" aria-label="Notes navigation">
+  <div class="search">
+    <label class="sr-only" for="sidebar-search">Search notes</label>
+    <input
+      id="sidebar-search"
+      type="search"
+      [value]="query()"
+      (input)="onInput($event)"
+      placeholder="Search notes..."
+      aria-label="Search notes"
+    />
+  </div>
+
+  <button class="btn-primary" type="button" (click)="createNote()" aria-label="Create a new note">
+    + New Note
+  </button>
+
+  <ng-container *ngIf="filteredNotes$ | async as notes">
+    <ul class="notes-ul" *ngIf="notes.length; else emptyState">
+      <li
+        class="note-item"
+        *ngFor="let n of notes"
+        [class.active]="isActive(n)"
+        (click)="openNote(n)"
+        tabindex="0"
+        (keydown.enter)="openNote(n)"
+        (keydown.space)="openNote(n); $event.preventDefault();"
+        [attr.aria-current]="isActive(n) ? 'page' : null"
+        role="link"
+      >
+        <div class="note-title" [title]="n.title">{{ n.title || '(Untitled)' }}</div>
+        <div class="note-meta">
+          <span class="updated">Updated {{ n.updatedAt | date:'medium' }}</span>
+          <span class="tags" *ngIf="tags(n) as tagStr" [title]="tagStr">{{ tagStr }}</span>
+        </div>
+        <div class="note-snippet" *ngIf="snippet(n) as s">{{ s }}</div>
+      </li>
+    </ul>
+
+    <ng-template #emptyState>
+      <div class="empty">
+        <p>No notes found.</p>
+        <p class="muted">Try a different search or create a new note.</p>
+      </div>
+    </ng-template>
+  </ng-container>
+</section>

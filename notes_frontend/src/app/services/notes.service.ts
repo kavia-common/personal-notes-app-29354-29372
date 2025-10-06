@@ -119,8 +119,8 @@ export class NotesService {
 
   private sortDescByUpdatedAt(list: Note[]): Note[] {
     return list.sort((a, b) => {
-      const ta = Date.parse(a.updatedAt || a.createdAt || 0);
-      const tb = Date.parse(b.updatedAt || b.createdAt || 0);
+      const ta = Date.parse((a.updatedAt || a.createdAt || '') as string);
+      const tb = Date.parse((b.updatedAt || b.createdAt || '') as string);
       return tb - ta;
     });
   }
