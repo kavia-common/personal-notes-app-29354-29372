@@ -34,13 +34,13 @@
 
 .search input:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.2);
   outline: none;
 }
 
 .search input:focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 /* Keep container spacing; list internally handles search and button */

@@ -6,8 +6,10 @@
       type="search"
       [value]="query()"
       (input)="onInput($event)"
+      (keydown)="onSearchKeydown($event)"
       placeholder="Search notes..."
       aria-label="Search notes"
+      autocomplete="off"
     />
   </div>
 
@@ -15,18 +17,25 @@
     + New Note
   </button>
 
+  <div class="sr-only" aria-live="polite">{{ statusMessage() }}</div>
+
   <ng-container *ngIf="filteredNotes$ | async as notes">
-    <ul class="notes-ul" *ngIf="notes.length; else emptyState">
+    <ul
+      class="notes-ul"
+      *ngIf="notes.length; else emptyState"
+      role="list"
+      [attr.aria-label]="listAriaLabel"
+    >
       <li
         class="note-item"
-        *ngFor="let n of notes"
-        [class.active]="isActive(n)"
+        *ngFor="let n of notes; let i = index"
         (click)="openNote(n)"
+        (keydown)="onItemKeydown($event, i, notes)"
         tabindex="0"
-        (keydown.enter)="openNote(n)"
-        (keydown.space)="openNote(n); $event.preventDefault();"
+        [class.active]="isActive(n)"
         [attr.aria-current]="isActive(n) ? 'page' : null"
-        role="link"
+        role="listitem"
+        [attr.aria-label]="(n.title || '(Untitled)') + ', updated ' + (n.updatedAt | date:'medium')"
       >
         <div class="note-title" [title]="n.title">{{ n.title || '(Untitled)' }}</div>
         <div class="note-meta">
@@ -38,7 +47,7 @@
     </ul>
 
     <ng-template #emptyState>
-      <div class="empty">
+      <div class="empty" role="status" aria-live="polite">
         <p>No notes found.</p>
         <p class="muted">Try a different search or create a new note.</p>
       </div>

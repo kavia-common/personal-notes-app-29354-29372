@@ -39,6 +39,15 @@ export class NotesListComponent implements OnInit {
   // Selected note id from current route
   activeNoteId = signal<string | null>(null);
 
+  // Focus/index management for keyboard navigation
+  focusedIndex = signal<number>(-1);
+
+  // Live status message for SR
+  statusMessage = signal<string>('');
+
+  // ARIA label for list
+  listAriaLabel = 'Notes list';
+
   ngOnInit(): void {
     // Compute active note id from the current url
     this.updateActiveFromUrl(this.router.url);
@@ -58,7 +67,13 @@ export class NotesListComponent implements OnInit {
         startWith('')
       ),
     ]).pipe(
-      map(([q]) => this.notesService.listNotes(q)),
+      map(([q]) => {
+        const list = this.notesService.listNotes(q);
+        this.statusMessage.set(`${list.length} ${list.length === 1 ? 'note' : 'notes'} found`);
+        // reset focused index when list changes
+        this.focusedIndex.set(list.length ? 0 : -1);
+        return list;
+      }),
     );
   }
 
@@ -82,6 +97,22 @@ export class NotesListComponent implements OnInit {
     const target = hasTarget(event) ? (event as { target: { value?: unknown } | null }).target : null;
     const val = target && typeof target.value === 'string' ? target.value : '';
     this.onQueryChange(val);
+  }
+
+  // PUBLIC_INTERFACE
+  /** Handle keydown events on the search input: ArrowDown focuses first list item if available. */
+  onSearchKeydown(event: any): void {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      // Try to move focus to the first list item
+      const g: any = typeof globalThis !== 'undefined' ? globalThis : undefined;
+      if (g && g.document) {
+        const first = g.document.querySelector('.notes-ul .note-item') as any;
+        if (first && typeof first.focus === 'function') {
+          first.focus();
+        }
+      }
+    }
   }
 
   /**
@@ -128,5 +159,49 @@ export class NotesListComponent implements OnInit {
    */
   tags(note: Note): string {
     return Array.isArray(note.tags) && note.tags.length ? note.tags.join(', ') : '';
+  }
+
+  // PUBLIC_INTERFACE
+  /** Handle keyboard navigation within the list items. */
+  onItemKeydown(event: any, index: number, notes: Note[]): void {
+    const key = event.key;
+    if (!notes || !notes.length) return;
+
+    const clamp = (i: number) => Math.max(0, Math.min(notes.length - 1, i));
+    let nextIndex = index;
+
+    if (key === 'ArrowDown') {
+      event.preventDefault();
+      nextIndex = clamp(index + 1);
+      this.focusItem(nextIndex);
+    } else if (key === 'ArrowUp') {
+      event.preventDefault();
+      nextIndex = clamp(index - 1);
+      this.focusItem(nextIndex);
+    } else if (key === 'Home') {
+      event.preventDefault();
+      nextIndex = 0;
+      this.focusItem(nextIndex);
+    } else if (key === 'End') {
+      event.preventDefault();
+      nextIndex = notes.length - 1;
+      this.focusItem(nextIndex);
+    } else if (key === 'Enter' || key === ' ') {
+      event.preventDefault();
+      this.openNote(notes[index]);
+    }
+
+    this.focusedIndex.set(nextIndex);
+  }
+
+  /** Move DOM focus to the item at the provided index, if present. */
+  private focusItem(index: number): void {
+    const g: any = typeof globalThis !== 'undefined' ? globalThis : undefined;
+    if (!g || !g.document) return;
+    const items = g.document.querySelectorAll('.notes-ul .note-item') as any;
+    const el = items && items[index] ? items[index] : null;
+    if (el && typeof el.focus === 'function') {
+      el.focus();
+    }
   }
 }

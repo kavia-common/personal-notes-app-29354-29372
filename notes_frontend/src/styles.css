@@ -24,7 +24,7 @@ html, body {
   --muted: #6b7280;
 
   /* Focus ring using color-mix for better contrast */
-  --ring: color-mix(in oklab, var(--color-primary) 60%, white);
+  --ring: color-mix(in oklab, var(--color-primary) 75%, white);
 
   /* Spacing scale */
   --space-1: 0.25rem;
@@ -76,7 +76,7 @@ a:hover { text-decoration: underline; }
 /* Accessible focus outlines */
 :focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 /* Buttons default reset */

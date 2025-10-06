@@ -64,5 +64,5 @@
 /* Accessible focus outlines leveraging global --ring for high contrast */
 :focus-visible {
   outline: 3px solid var(--ring);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }

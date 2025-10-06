@@ -107,7 +107,7 @@ export class NoteEditorComponent implements OnInit {
             title: found.title ?? '',
             content: found.content ?? '',
           });
-          this.statusMessage.set('Editing existing note.');
+          this.statusMessage.set(`Editing note titled ${found.title || 'Untitled'}.`);
         }
       }
     });
@@ -170,8 +170,11 @@ export class NoteEditorComponent implements OnInit {
       this.errorMessage.set('Missing note ID. Unable to delete.');
       return;
     }
+    const current = this.note();
+    const title = current?.title?.trim() || 'Untitled';
+    const message = `Delete note "${title}"? This action cannot be undone.`;
     const confirmed = typeof globalThis !== 'undefined' && typeof globalThis.confirm === 'function'
-      ? globalThis.confirm('Are you sure you want to delete this note? This action cannot be undone.')
+      ? globalThis.confirm(message)
       : true;
     if (!confirmed) return;
 
