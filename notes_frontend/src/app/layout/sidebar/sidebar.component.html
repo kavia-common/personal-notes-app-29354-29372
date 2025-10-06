@@ -1,0 +1,29 @@
+<div class="sidebar-wrap">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">🗒️</span>
+    <span class="brand-name">Notes</span>
+  </div>
+
+  <label class="sr-only" for="search">Search notes</label>
+  <div class="search">
+    <input
+      id="search"
+      type="search"
+      [value]="query"
+      (input)="onQueryInput($event)"
+      (keydown.enter)="onSearchEnter()"
+      placeholder="Search notes..."
+      aria-label="Search notes"
+    />
+  </div>
+
+  <nav class="nav" aria-label="Notes">
+    <p class="nav-placeholder">Notes navigation will appear here.</p>
+  </nav>
+
+  <div class="actions">
+    <a class="btn-primary" routerLink="/notes/new" aria-label="Create a new note">
+      + New Note
+    </a>
+  </div>
+</div>

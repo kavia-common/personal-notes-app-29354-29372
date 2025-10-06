@@ -1,3 +1,15 @@
-<div class="container">
-  <h1>{{ title }}</h1>
+<div class="app-shell">
+  <aside class="sidebar" role="navigation" aria-label="Notes navigation">
+    <app-sidebar></app-sidebar>
+  </aside>
+
+  <main class="main" role="main">
+    <header class="main-header">
+      <h1 class="app-title">{{ title }}</h1>
+    </header>
+
+    <section class="content" aria-live="polite">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
 </div>
