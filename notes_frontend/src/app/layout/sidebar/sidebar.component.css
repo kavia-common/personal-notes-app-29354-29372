@@ -1,16 +1,16 @@
 .sidebar-wrap {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: var(--space-3);
+  padding: var(--space-4);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
   font-weight: 700;
-  color: var(--text-color, #111827);
+  color: var(--text);
 }
 
 .logo {
@@ -21,21 +21,35 @@
   letter-spacing: 0.2px;
 }
 
+/* Search input themed via global tokens; ensure accessible focus via :focus-visible */
 .search input {
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(0,0,0,0.12);
-  background: #fff;
-  color: var(--text-color, #111827);
-  transition: box-shadow 120ms ease, border-color 120ms ease;
+  background: var(--surface);
+  color: var(--text);
+  transition: box-shadow 120ms ease, border-color 120ms ease, background-color 120ms ease;
 }
 
 .search input:focus {
-  border-color: var(--color-primary, #2563EB);
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
   outline: none;
 }
 
+.search input:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
 /* Keep container spacing; list internally handles search and button */
 .nav-placeholder { display: none; }
+
+/* Responsive: allow sidebar to be a stacked section */
+@media (max-width: 768px) {
+  .sidebar-wrap {
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+}
