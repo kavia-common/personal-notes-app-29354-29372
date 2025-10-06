@@ -1,0 +1,78 @@
+<section class="editor-wrap" aria-labelledby="editor-heading">
+  <h2 id="editor-heading" class="sr-only">Note Editor</h2>
+
+  <!-- Header actions -->
+  <div class="editor-header">
+    <div class="title">{{ headerTitle() }}</div>
+    <div class="actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        aria-label="Cancel and go back to notes list"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-danger"
+        *ngIf="!isCreateMode() && note()"
+        (click)="onDelete()"
+        aria-label="Delete this note"
+      >
+        Delete
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSave()"
+        [disabled]="form.invalid"
+        aria-label="Save note"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+
+  <!-- Not found state -->
+  <div *ngIf="!isCreateMode() && !note()" class="not-found" role="alert" aria-live="assertive">
+    <p>We couldn't find that note. It may have been deleted.</p>
+    <a class="link" [routerLink]="['/notes']" aria-label="Go back to notes list">Go back to notes</a>
+  </div>
+
+  <!-- Form -->
+  <form *ngIf="isCreateMode() || note()" class="form" [formGroup]="form" novalidate aria-describedby="form-help">
+    <div class="field">
+      <label for="title">Title</label>
+      <input
+        #titleInput
+        id="title"
+        type="text"
+        formControlName="title"
+        [attr.aria-invalid]="isTitleInvalid()"
+        [attr.aria-describedby]="isTitleInvalid() ? 'title-error' : null"
+        placeholder="Enter title..."
+      />
+      <div class="error" role="alert" id="title-error" *ngIf="isTitleInvalid()">{{ titleErrorMsg() }}</div>
+    </div>
+
+    <div class="field">
+      <label for="content">Content</label>
+      <textarea
+        id="content"
+        formControlName="content"
+        rows="12"
+        placeholder="Write your note content..."
+      ></textarea>
+      <div id="form-help" class="help">
+        Title is required, maximum 120 characters. Content is optional.
+      </div>
+    </div>
+  </form>
+
+  <!-- Status regions -->
+  <div class="sr-only" aria-live="polite">{{ statusMessage() }}</div>
+  <div class="error-global" role="alert" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+</section>
